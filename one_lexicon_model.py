@@ -217,6 +217,4 @@ for epoch in range(num_epochs):
                 spearmans = sp.stats.stats.spearmanr(o, s)
                 print('Pearsons: {}. Spearmans: {}'.format(pearsons, spearmans))
 
-                #print('Pearsons: {}. Spearmans: {}'.format(pearsons, spearmans))
-
 
