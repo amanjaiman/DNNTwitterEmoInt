@@ -3,6 +3,7 @@ from nltk.tokenize import TweetTokenizer
 from afinn import Afinn
 
 ### Lexicons ###
+emo10e = open("data/raw/Lexicons/uni-bwn-pos-dp-BCC-Lex.csv")
 hashtag_senti = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Sentiment-Lexicon-v1.0/HS-unigrams.txt", "r").readlines()
 emolex = open("data/raw/Lexicons/Lexicons/NRC-Emotion-Lexicon-v0.92/NRC-Emotion-Lexicon-Wordlevel-v0.92.txt").readlines()
 hashtag_emo = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Emotion-Lexicon-v0.2/NRC-Hashtag-Emotion-Lexicon-v0.2.txt").readline()
@@ -10,17 +11,24 @@ emoticon = open("data/raw/Lexicons/Lexicons/NRC-Emoticon-Lexicon-v1.0/Emoticon-u
 # TODO: Negations are made in the following lexicon
 # hastag_senti_afflexneglex = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Sentiment-AffLexNegLex-v1.0/HS-AFFLEX-NEGLEX-unigrams.txt").readlines()
 # TODO: Add All NRC Lexicons
-# TODO: Add BingLiu Positive and Negative
 bingliu_pos = open("data/raw/Lexicons/BingLiu/BingLiu_positive-words.txt").readlines()
 bingliu_neg = open("data/raw/Lexicons/BingLiu/BingLiu_negative-words.txt").readlines()
-# TODO: Add MPQA
 mpqa = open("data/raw/Lexicons/MPQA/MPQA.tff").readlines()
+# AFINN lexicons used via module
 
 ### Create Tokenizer object ###
 tokenizer = TweetTokenizer()
 
 ### Transforming the tweet into many vectors ###
-# TODO: Isn't what I append to the vector supposed to be an int????
+def tweetToEmo10EVector(tweet, emotion):
+    vec = np.zeros(len(emo10e)-1)
+    tokens = tokenizer.tokenize(tweet)
+    emotion_index = emo10e.readline().split('\t').index(emotion)
+    for i, line in enumerate(emo10e.readlines()): # starts at the 2nd line
+        if line.split('\t')[0] in tokens:
+            vec[i] = line.split('\t')[emotion_index]
+    return vec
+
 
 def tweetToHSVector(tweet):
     vec = np.zeros(len(hashtag_senti))
@@ -110,4 +118,4 @@ def tweetToSparseLexVector(tweet, emotion): # to create the final vector
 
 ### Total length of the vector ###
 def getLength():
-    return len(hashtag_senti) + 14182 + hse_len + len(emoticon) + 8222 + len(bingliu_pos) + len(bingliu_neg) + 1
+    return len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(emoticon) + 8222 + len(bingliu_pos) + len(bingliu_neg) + 1
