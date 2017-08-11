@@ -34,9 +34,20 @@ def pearson_def(x, y):
         ydiff2 += ydiff * ydiff
     return diffprod / math.sqrt(xdiff2 * ydiff2)
 
-### Formatting the training and testing data ###
-train = open("data/raw/Anger/anger-ratings-0to1.train.txt", "r").readlines()
-test = open("data/raw/Anger/anger-ratings-0to1.test.gold.txt", "r").readlines()
+### Choosing the training and testing data ###
+emotion = input("Enter the emotion you want to run for: ").lower()
+if emotion == "anger":
+    train = open("data/raw/Anger/anger-ratings-0to1.train.txt", "r").readlines()
+    test = open("data/raw/Anger/anger-ratings-0to1.test.gold.txt", "r").readlines()
+elif emotion == "fear":
+    train = open("data/raw/Fear/fear-ratings-0to1.train.txt", "r").readlines()
+    test = open("data/raw/Fear/fear-ratings-0to1.test.gold.txt", "r").readlines()
+elif emotion == "joy":
+    train = open("data/raw/Joy/joy-ratings-0to1.train.txt", "r").readlines()
+    test = open("data/raw/Joy/joy-ratings-0to1.test.gold.txt", "r").readlines()
+elif emotion == "sadness":
+    train = open("data/raw/Sadness/sadness-ratings-0to1.train.txt", "r").readlines()
+    test = open("data/raw/Sadness/sadness-ratings-0to1.test.gold.txt", "r").readlines()
 
 training_data = []
 testing_data = []
@@ -62,8 +73,8 @@ testing_time = time.time()
 print("Done! Parse time: {}".format(testing_time-start2))
 
 batch_size = 50
-n_iters = 5000
-num_epochs = 294 #  ~= 5000/(850/50) # 177 for 3000
+n_iters = 4000
+num_epochs = math.floor(n_iters/(len(test)/batch_size))
 
 train_loader = torch.utils.data.DataLoader(dataset=training_data,
                                            batch_size=batch_size,
@@ -83,7 +94,7 @@ class DeepNeuralNetworkModel(nn.Module):
         self.relu1 = nn.ReLU()
 
         # Enable below to increase number of hidden layers
-        # Linear function 2 100 --> 100
+        '''# Linear function 2 100 --> 100
         self.fc2 = nn.Linear(hidden_dim, hidden_dim)
         # non-linearity 2
         self.relu2 = nn.ReLU()
@@ -106,7 +117,7 @@ class DeepNeuralNetworkModel(nn.Module):
         # Linear function 6 100 --> 100
         self.fc6 = nn.Linear(hidden_dim, hidden_dim)
         # non-linearity 6
-        self.relu6 = nn.ReLU()
+        self.relu6 = nn.ReLU()'''
 
         # Readout Linear function 100 --> 1
         self.fcr = nn.Linear(hidden_dim, output_dim)
@@ -118,7 +129,7 @@ class DeepNeuralNetworkModel(nn.Module):
         out = self.relu1(out)
 
         # Enable below to increase number of hidden layers
-        # Linear function 2
+        '''# Linear function 2
         out = self.fc2(out)
         # Non-linearity 2
         out = self.relu2(out)
@@ -141,7 +152,7 @@ class DeepNeuralNetworkModel(nn.Module):
         # Linear function 6
         out = self.fc6(out)
         # Non-linearity 6
-        out = self.relu6(out)
+        out = self.relu6(out)'''
 
         # Readout Linear function
         out = self.fcr(out)
@@ -215,5 +226,3 @@ for epoch in range(num_epochs):
                 #print('Pearsons: {}. Spearmans: {}'.format(pearsons, spearmans))
 end = time.time()
 print("Total time: {}".format(end-begin))
-
-
