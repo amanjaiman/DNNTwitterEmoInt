@@ -3,7 +3,7 @@ from nltk.tokenize import TweetTokenizer
 from afinn import Afinn
 
 ### Lexicons ###
-emo10e = open("data/raw/Lexicons/uni-bwn-pos-dp-BCC-Lex.csv")
+emo10e = open("data/raw/Lexicons/uni-bwn-pos-dp-BCC-Lex.csv").readlines()
 hashtag_senti = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Sentiment-Lexicon-v1.0/HS-unigrams.txt", "r").readlines()
 emolex = open("data/raw/Lexicons/Lexicons/NRC-Emotion-Lexicon-v0.92/NRC-Emotion-Lexicon-Wordlevel-v0.92.txt").readlines()
 hashtag_emo = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Emotion-Lexicon-v0.2/NRC-Hashtag-Emotion-Lexicon-v0.2.txt").readline()
@@ -23,12 +23,14 @@ tokenizer = TweetTokenizer()
 def tweetToEmo10EVector(tweet, emotion):
     vec = np.zeros(len(emo10e)-1)
     tokens = tokenizer.tokenize(tweet)
-    emotion_index = emo10e.readline().split('\t').index(emotion)
-    for i, line in enumerate(emo10e.readlines()): # starts at the 2nd line
-        if line.split('\t')[0] in tokens:
-            vec[i] = line.split('\t')[emotion_index]
+    emotion_index = emo10e[0].split('\t').index(emotion)
+    for i in range(0, len(emo10e)):
+        if i == 0:
+            continue
+        else:
+            if emo10e[i].split('\t')[0] in tokens:
+                vec[i] = emo10e[i].split('\t')[emotion_index]
     return vec
-
 
 def tweetToHSVector(tweet):
     vec = np.zeros(len(hashtag_senti))
