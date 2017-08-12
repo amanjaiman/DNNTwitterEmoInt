@@ -6,7 +6,7 @@ from afinn import Afinn
 emo10e = open("data/raw/Lexicons/uni-bwn-pos-dp-BCC-Lex.csv").readlines()
 hashtag_senti = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Sentiment-Lexicon-v1.0/HS-unigrams.txt", "r").readlines()
 emolex = open("data/raw/Lexicons/Lexicons/NRC-Emotion-Lexicon-v0.92/NRC-Emotion-Lexicon-Wordlevel-v0.92.txt").readlines()
-hashtag_emo = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Emotion-Lexicon-v0.2/NRC-Hashtag-Emotion-Lexicon-v0.2.txt").readline()
+hashtag_emo = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Emotion-Lexicon-v0.2/NRC-Hashtag-Emotion-Lexicon-v0.2.txt").readlines()
 emoticon = open("data/raw/Lexicons/Lexicons/NRC-Emoticon-Lexicon-v1.0/Emoticon-unigrams.txt").readlines()
 # TODO: Negations are made in the following lexicon
 # hastag_senti_afflexneglex = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Sentiment-AffLexNegLex-v1.0/HS-AFFLEX-NEGLEX-unigrams.txt").readlines()
