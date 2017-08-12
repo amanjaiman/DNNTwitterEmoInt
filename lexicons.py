@@ -52,7 +52,7 @@ def tweetToEmoLexVector(tweet, emotion):
     return vec
 
 def tweetToHSEVector(tweet, emotion):
-    vec = np.zeros(4500)
+    vec = np.zeros(6000) # The higher end for any one emotion
     tokens = tokenizer.tokenize(tweet)
     item = 0
     corr = False # Reached correct emotion
@@ -80,7 +80,7 @@ def tweetToEmoticonVector(tweet):
     return vec
 
 def tweetToMPQAVector(tweet):
-    vec = np.zeros(8222)
+    vec = np.zeros(len(mpqa)
     tokens = tokenizer.tokenize(tweet)
     for i, line in enumerate(mpqa):
         val = 0
@@ -120,4 +120,4 @@ def tweetToSparseLexVector(tweet, emotion): # to create the final vector
 
 ### Total length of the vector ###
 def getLength():
-    return len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(emoticon) + 8222 + len(bingliu_pos) + len(bingliu_neg) + 1
+    return len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(emoticon) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + 1
