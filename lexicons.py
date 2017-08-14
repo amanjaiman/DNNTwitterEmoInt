@@ -114,7 +114,7 @@ def tweetToBingLiuVector(tweet):
 
 ### Combine all the vectors ###
 def tweetToSparseLexVector(tweet, emotion): # to create the final vector
-    args = (tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToEmoticonVector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINNVector(tweet))
+    args = (tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToSentiment140Vector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINNVector(tweet))
     return np.concatenate(args)
 
 ### Total length of the vector ###
