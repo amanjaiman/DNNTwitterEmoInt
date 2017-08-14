@@ -119,4 +119,4 @@ def tweetToSparseLexVector(tweet, emotion): # to create the final vector
 
 ### Total length of the vector ###
 def getLength():
-    return len(emo10e)-1e + len(hashtag_senti) + 14182 + hse_len + len(sentiment140) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + len(afinn)
+    return len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(sentiment140) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + len(afinn)
