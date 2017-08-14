@@ -86,7 +86,7 @@ def tweetToMPQAVector(tweet):
         val = 0
         l = line.split(" ")
         word = l[2].split("=")[1]
-        polarity = l[5].split("=")[1]
+        polarity = l[5].split("=")[1].strip()
         if word in tokens:
             if polarity == "negative":
                 val = -1
