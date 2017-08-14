@@ -7,7 +7,7 @@ emo10e = open("data/raw/Lexicons/uni-bwn-pos-dp-BCC-Lex.csv").readlines()
 hashtag_senti = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Sentiment-Lexicon-v1.0/HS-unigrams.txt", "r").readlines()
 emolex = open("data/raw/Lexicons/Lexicons/NRC-Emotion-Lexicon-v0.92/NRC-Emotion-Lexicon-Wordlevel-v0.92.txt").readlines()
 hashtag_emo = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Emotion-Lexicon-v0.2/NRC-Hashtag-Emotion-Lexicon-v0.2.txt").readlines()
-emoticon = open("data/raw/Lexicons/Lexicons/NRC-Emoticon-Lexicon-v1.0/Emoticon-unigrams.txt").readlines()
+sentiment140 = open("data/raw/Lexicons/Lexicons/NRC-Emoticon-Lexicon-v1.0/Emoticon-unigrams.txt").readlines()
 # TODO: Negations are made in the following lexicon
 # hastag_senti_afflexneglex = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Sentiment-AffLexNegLex-v1.0/HS-AFFLEX-NEGLEX-unigrams.txt").readlines()
 # TODO: Add All NRC Lexicons
@@ -71,10 +71,10 @@ def tweetToHSEVector(tweet, emotion):
     hse_len = len(vec[:item])
     return vec[:item]
 
-def tweetToEmoticonVector(tweet):
-    vec = np.zeros(len(emoticon))
+def tweetToSentiment140Vector(tweet):
+    vec = np.zeros(len(sentiment140))
     tokens = tokenizer.tokenize(tweet)
-    for i, line in enumerate(emoticon):
+    for i, line in enumerate(sentiment140):
         if line.split('\t')[0] in tokens:
             vec[i] = float(line.split('\t')[1])
     return vec
@@ -115,9 +115,9 @@ def tweetToAFINN(tweet):
 
 ### Combine all the vectors ###
 def tweetToSparseLexVector(tweet, emotion): # to create the final vector
-    args = (tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToEmoticonVector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINN(tweet))
+    args = (tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToSentiment140Vector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINN(tweet))
     return np.concatenate(args)
 
 ### Total length of the vector ###
 def getLength():
-    return len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(emoticon) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + 1
+    return len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(sentiment140) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + 1
