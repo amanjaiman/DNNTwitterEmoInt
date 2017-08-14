@@ -1,25 +1,32 @@
 import numpy as np
 from nltk.tokenize import TweetTokenizer
-from afinn import Afinn
 
 ### Lexicons ###
 emo10e = open("data/raw/Lexicons/uni-bwn-pos-dp-BCC-Lex.csv").readlines()
 hashtag_senti = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Sentiment-Lexicon-v1.0/HS-unigrams.txt", "r").readlines()
 emolex = open("data/raw/Lexicons/Lexicons/NRC-Emotion-Lexicon-v0.92/NRC-Emotion-Lexicon-Wordlevel-v0.92.txt").readlines()
 hashtag_emo = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Emotion-Lexicon-v0.2/NRC-Hashtag-Emotion-Lexicon-v0.2.txt").readlines()
-sentiment140 = open("data/raw/Lexicons/Lexicons/NRC-Emoticon-Lexicon-v1.0/Emoticon-unigrams.txt").readlines()
+sentiment140 = open("data/raw/Lexicons/Lexicons/NRC-Emoticon-Lexicon-v1.0/Emoticon-unigrams.txt").readlines() #(Sentiment 140)
 # TODO: Negations are made in the following lexicon
 # hastag_senti_afflexneglex = open("data/raw/Lexicons/Lexicons/NRC-Hashtag-Sentiment-AffLexNegLex-v1.0/HS-AFFLEX-NEGLEX-unigrams.txt").readlines()
 # TODO: Add All NRC Lexicons
 bingliu_pos = open("data/raw/Lexicons/BingLiu/BingLiu_positive-words.txt").readlines()
 bingliu_neg = open("data/raw/Lexicons/BingLiu/BingLiu_negative-words.txt").readlines()
 mpqa = open("data/raw/Lexicons/MPQA/MPQA.tff").readlines()
-# AFINN lexicons used via module
+afinn = open("data/raw/Lexicons/AFINN/afinn.txt").readlines()
 
 ### Create Tokenizer object ###
 tokenizer = TweetTokenizer()
 
 ### Transforming the tweet into many vectors ###
+def tweetToAFINNVector(tweet):
+    vec = np.zeros(len(afinn))
+    tokens = tokenizer.tokenize(tweet)
+    for i, line in enumerate(afinn):
+        if line.split('\t')[0] in tokens:
+            vec[i] = float(line.split('\t')[1])
+    return vec
+
 def tweetToEmo10EVector(tweet, emotion):
     vec = np.zeros(len(emo10e)-1)
     tokens = tokenizer.tokenize(tweet)
@@ -52,7 +59,7 @@ def tweetToEmoLexVector(tweet, emotion):
     return vec
 
 def tweetToHSEVector(tweet, emotion):
-    vec = np.zeros(6000) # The higher end for any one emotion
+    vec = np.zeros(6000)
     tokens = tokenizer.tokenize(tweet)
     item = 0
     corr = False # Reached correct emotion
@@ -80,44 +87,36 @@ def tweetToSentiment140Vector(tweet):
     return vec
 
 def tweetToMPQAVector(tweet):
-    vec = np.zeros(len(mpqa)
+    vec = np.zeros(len(mpqa))
     tokens = tokenizer.tokenize(tweet)
     for i, line in enumerate(mpqa):
-        val = 0
         l = line.split(" ")
         word = l[2].split("=")[1]
-        polarity = l[5].split("=")[1].strip()
         if word in tokens:
+            polarity = l[5].split("=")[1].strip()
             if polarity == "negative":
-                val = -1
+                vec[i] = -1
             elif polarity == "positive":
-                val = 1
-            vec[i] = val
+                vec[i] = 1
     return vec
 
 def tweetToBingLiuVector(tweet):
     vec = np.zeros(len(bingliu_neg)+len(bingliu_pos))
     tokens = tokenizer.tokenize(tweet)
-    var = len(bingliu_neg) # TODO: come up with better variable name
+    neg_len = len(bingliu_neg) # TODO: come up with better variable name
     for i, line in enumerate(bingliu_neg):
         if line.strip() in tokens:
             vec[i] = -1
     for i, line in enumerate(bingliu_pos):
         if line.strip() in tokens:
-            vec[i+var] = 1
-    return vec
-
-def tweetToAFINN(tweet):
-    afinn = Afinn(emoticons=True)
-    vec = np.zeros(1)
-    vec[0] = afinn.score(tweet)
+            vec[i+neg_len] = 1
     return vec
 
 ### Combine all the vectors ###
 def tweetToSparseLexVector(tweet, emotion): # to create the final vector
-    args = (tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToSentiment140Vector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINN(tweet))
+    args = (tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToEmoticonVector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINNVector(tweet))
     return np.concatenate(args)
 
 ### Total length of the vector ###
 def getLength():
-    return len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(sentiment140) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + 1
+    return len(emo10e)-1e + len(hashtag_senti) + 14182 + hse_len + len(sentiment140) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + len(afinn)
