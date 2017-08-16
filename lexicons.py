@@ -1,5 +1,6 @@
 import numpy as np
 from nltk.tokenize import TweetTokenizer
+import sentistrength # To use sentistrength lexicon
 
 ### Lexicons ###
 emo10e = open("data/raw/Lexicons/uni-bwn-pos-dp-BCC-Lex.csv").readlines()
@@ -114,9 +115,9 @@ def tweetToBingLiuVector(tweet):
 
 ### Combine all the vectors ###
 def tweetToSparseLexVector(tweet, emotion): # to create the final vector
-    args = (tweetToEmo10EVector(tweet, emotion), tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToSentiment140Vector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINNVector(tweet))
+    args = (sentistrength.tweetToSentiStrength(tweet), tweetToEmo10EVector(tweet, emotion), tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToSentiment140Vector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINNVector(tweet))
     return np.concatenate(args)
 
 ### Total length of the vector ###
 def getLength():
-    return len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(sentiment140) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + len(afinn)
+    return sentistrength.getLength() + len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(sentiment140) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + len(afinn)
