@@ -1,6 +1,6 @@
 import numpy as np
 from nltk.tokenize import TweetTokenizer
-import sentistrength # To use sentistrength lexicon
+import sentistrength
 
 ### Lexicons ###
 emo10e = open("data/raw/Lexicons/uni-bwn-pos-dp-BCC-Lex.csv").readlines()
@@ -15,6 +15,7 @@ bingliu_pos = open("data/raw/Lexicons/BingLiu/BingLiu_positive-words.txt").readl
 bingliu_neg = open("data/raw/Lexicons/BingLiu/BingLiu_negative-words.txt").readlines()
 mpqa = open("data/raw/Lexicons/MPQA/MPQA.tff").readlines()
 afinn = open("data/raw/Lexicons/AFINN/afinn.txt").readlines()
+
 
 ### Create Tokenizer object ###
 tokenizer = TweetTokenizer()
