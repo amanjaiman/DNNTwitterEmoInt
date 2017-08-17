@@ -221,7 +221,7 @@ for epoch in range(num_epochs):
                 #  Calculate accuracy AND SPEARMAN CONSTANT PEARSONS CONSTANT
                 pearsons = pearson_def(o, s)
                 spearmans = sp.stats.stats.spearmanr(o, s)
-                print('Pearsons: {}. Spearmans: {}'.format(pearsons, spearmans))
+                print('Pearsons: {}. Spearmans: {}. Loss: {}'.format(pearsons, spearmans[0], loss.data[0]))
 
                 #print('Pearsons: {}. Spearmans: {}'.format(pearsons, spearmans))
 end = time.time()
