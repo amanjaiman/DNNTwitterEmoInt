@@ -7,10 +7,9 @@ import numpy as np
 import scipy as sp
 from nltk.tokenize import TweetTokenizer
 import math
-import lexicons
 import time
-
 begin = time.time()
+import sparsefeatures
 
 ### Pearson's Constant ###
 def average(x):
@@ -61,14 +60,14 @@ def scoreToScore(score): # Format the score correctly
 start = time.time()
 print("Parsing training data...")
 for line in train:
-    training_data.append([lexicons.tweetToSparseLexVector(line.split('\t')[1], line.split('\t')[2]), scoreToScore(line.split('\t')[3])])
+    training_data.append([sparsefeatures.tweetToSparseFeatures(line.split('\t')[1].lower(), line.split('\t')[2]), scoreToScore(line.split('\t')[3])])
 training_time = time.time()
 print("Done! Parse time: {}".format(training_time-start))
 
 start2 = time.time()
 print("Parsing testing data...")
 for line in test:
-    testing_data.append([lexicons.tweetToSparseLexVector(line.split('\t')[1], line.split('\t')[2]), scoreToScore(line.split('\t')[3])])
+    testing_data.append([sparsefeatures.tweetToSparseFeatures(line.split('\t')[1].lower(), line.split('\t')[2]), scoreToScore(line.split('\t')[3])])
 testing_time = time.time()
 print("Done! Parse time: {}".format(testing_time-start2))
 
@@ -84,6 +83,7 @@ test_loader = torch.utils.data.DataLoader(dataset=testing_data,
                                           batch_size=len(testing_data),
                                           shuffle=False)
 
+# Neural Network - Running with 1 hidden layers
 class DeepNeuralNetworkModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_class):
         super(DeepNeuralNetworkModel, self).__init__()
@@ -158,7 +158,7 @@ class DeepNeuralNetworkModel(nn.Module):
         out = self.fcr(out)
         return out
 
-input_dim = lexicons.getLength() # len of lexicon
+input_dim = sparsefeatures.getLength()
 hidden_dim = 100 # number of neurons
 output_dim = 1
 
@@ -170,7 +170,7 @@ if torch.cuda.is_available():
 
 criterion = nn.MSELoss()
 
-learning_rate = 0.1  # TODO: Modify this based on each run through dataset
+learning_rate = 0.1
 
 optimizer = torch.optim.Adadelta(model.parameters(), lr=learning_rate, rho=0.9, eps=1e-06, weight_decay=0.01)
 
@@ -220,9 +220,8 @@ for epoch in range(num_epochs):
 
                 #  Calculate accuracy AND SPEARMAN CONSTANT PEARSONS CONSTANT
                 pearsons = pearson_def(o, s)
-                spearmans = sp.stats.stats.spearmanr(o, s)
+                spearmans = sp.stats.spearmanr(o, s)
                 print('Pearsons: {}. Spearmans: {}. Loss: {}'.format(pearsons, spearmans[0], loss.data[0]))
 
-                #print('Pearsons: {}. Spearmans: {}'.format(pearsons, spearmans))
 end = time.time()
 print("Total time: {}".format(end-begin))
