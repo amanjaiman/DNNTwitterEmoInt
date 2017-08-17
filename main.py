@@ -172,7 +172,7 @@ criterion = nn.MSELoss()
 
 learning_rate = 0.1  # TODO: Modify this based on each run through dataset
 
-optimizer = torch.optim.Adadelta(model.parameters(), lr=learning_rate, rho=0.9, eps=1e-06, weight_decay=0)
+optimizer = torch.optim.Adadelta(model.parameters(), lr=learning_rate, rho=0.9, eps=1e-06, weight_decay=0.01)
 
 ite = 0
 for epoch in range(num_epochs):
