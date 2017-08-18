@@ -1,5 +1,6 @@
 import numpy as np
 from nltk.tokenize import TweetTokenizer
+from nltk.corpus import sentiwordnet as swn # sentiwordnet lexicon
 import sentistrength
 
 ### Lexicons ###
@@ -21,6 +22,22 @@ afinn = open("data/raw/Lexicons/AFINN/afinn.txt").readlines()
 tokenizer = TweetTokenizer()
 
 ### Transforming the tweet into many vectors ###
+def tweetToSWNVector(tweet):
+    tokens = tokenizer.tokenize(tweet)
+    vec = np.zeros(3)
+    pos_score, neg_score, obj_score = 0, 0, 0
+    for token in tokens:
+        l = list(swn.senti_synsets(token))
+        if len(l) == 0:
+            continue
+        else: # if the word exists
+            pos_score += l[0].pos_score()
+            neg_score -= l[0].neg_score()
+            obj_score += l[0].obj_score()
+    vec[0], vec[1], vec[2] = pos_score, neg_score, obj_score
+    return vec
+
+
 def tweetToAFINNVector(tweet):
     vec = np.zeros(len(afinn))
     tokens = tokenizer.tokenize(tweet)
@@ -116,9 +133,9 @@ def tweetToBingLiuVector(tweet):
 
 ### Combine all the vectors ###
 def tweetToSparseLexVector(tweet, emotion): # to create the final vector
-    args = (sentistrength.tweetToSentiStrength(tweet), tweetToEmo10EVector(tweet, emotion), tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToSentiment140Vector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINNVector(tweet))
+    args = (tweetToSWNVector(tweet), sentistrength.tweetToSentiStrength(tweet), tweetToEmo10EVector(tweet, emotion), tweetToHSVector(tweet), tweetToEmoLexVector(tweet, emotion), tweetToHSEVector(tweet, emotion), tweetToSentiment140Vector(tweet), tweetToMPQAVector(tweet), tweetToBingLiuVector(tweet), tweetToAFINNVector(tweet))
     return np.concatenate(args)
 
 ### Total length of the vector ###
 def getLength():
-    return sentistrength.getLength() + len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(sentiment140) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + len(afinn)
+    return 3 + sentistrength.getLength() + len(emo10e)-1 + len(hashtag_senti) + 14182 + hse_len + len(sentiment140) + len(mpqa) + len(bingliu_pos) + len(bingliu_neg) + len(afinn)
